@@ -1,0 +1,29 @@
+# Env files
+*.env
+.env.*
+!.env.example
+
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/*.py[cod]
+backend/*_db # Example if you had local DB files
+
+# Node.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.DS_Store
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.idea/
+.vscode/
+*.swp

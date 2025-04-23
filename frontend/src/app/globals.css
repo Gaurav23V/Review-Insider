@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* src/app/globals.css */
+
+/* Optional: Add some base body styles if desired */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+   /* Or just a simple background: background-color: #f0f0f0; */
+}
+
+/* You can remove the :root variables if you don't use them */
