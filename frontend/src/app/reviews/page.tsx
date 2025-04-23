@@ -1,15 +1,8 @@
 // src/app/reviews/page.tsx
 import { supabase } from "@/lib/supabaseClient";
-import ReviewsTable from "@/components/ReviewsTable"; // Create this next
-
-type ReviewDisplayData = {
-  id: string;
-  text: string | null;
-  review_date: string | null;
-  metadata: any;
-  sentiment_score: number | null;
-  classification_label: string | null;
-};
+import ReviewsTable from "@/components/ReviewsTable";
+// Import types from the central location
+import type { ReviewDisplayData, ReviewRow } from "@/types";
 
 export default async function ReviewsPage() {
   const { data, error } = await supabase
@@ -24,24 +17,14 @@ export default async function ReviewsPage() {
       classifications ( label )
     `
     )
-    .order("review_date", { ascending: false }) // Show newest first
-    .limit(50); // Limit initial load
+    .order("review_date", { ascending: false })
+    .limit(50);
 
   if (error) {
     console.error("Error fetching reviews:", error);
+    // Consider returning an error component or throwing the error
+    // for Next.js error handling mechanisms (error.tsx)
   }
-
-  // Define types for nested relations
-  type Sentiment = { score: number | null } | null;
-  type Classification = { label: string | null } | null;
-  type ReviewRow = {
-    id: string;
-    text: string | null;
-    review_date: string | null;
-    metadata: any;
-    sentiments?: Sentiment[] | Sentiment | null;
-    classifications?: Classification[] | Classification | null;
-  };
 
   // Process data to flatten nested results
   const reviews: ReviewDisplayData[] =
@@ -49,20 +32,20 @@ export default async function ReviewsPage() {
       id: r.id,
       text: r.text,
       review_date: r.review_date,
-      metadata: r.metadata,
-      // Access nested data carefully, handling potential nulls/arrays
+      metadata: r.metadata, // Already typed as ReviewMetadata | null in ReviewRow
       sentiment_score: Array.isArray(r.sentiments)
         ? r.sentiments[0]?.score ?? null
-        : (r.sentiments as Sentiment)?.score ?? null,
+        : r.sentiments?.score ?? null, // Simplified access assuming object or null
       classification_label: Array.isArray(r.classifications)
         ? r.classifications[0]?.label ?? null
-        : (r.classifications as Classification)?.label ?? null,
+        : r.classifications?.label ?? null, // Simplified access
     })) ?? [];
 
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-4">Reviews</h1>
-      {error && <p className="text-red-500">Error loading reviews.</p>}
+      {/* Pass error state to UI or use Next.js error boundaries */}
+      {error && <p className="text-red-500">Error loading reviews: {error.message}</p>}
       {!error && <ReviewsTable reviews={reviews} />}
       {/* TODO: Add filtering/pagination controls */}
     </div>

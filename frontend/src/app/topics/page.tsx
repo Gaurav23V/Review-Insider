@@ -1,19 +1,14 @@
 // src/app/topics/page.tsx
-import { supabase } from '@/lib/supabaseClient';
-import TopicsList from '@/components/TopicList'; // Create this next
-
-type TopicData = {
-  topic_id: string;
-  label: string | null;
-};
+import { supabase } from "@/lib/supabaseClient";
+import TopicsList from "@/components/TopicList"; // Create this next
 
 export default async function TopicsPage() {
   // Fetch distinct topics, ordered perhaps by creation time or label
   const { data: topics, error } = await supabase
-    .from('topics')
-    .select('topic_id, label')
+    .from("topics")
+    .select("topic_id, label")
     // Optional: Add ordering if desired
-    .order('created_at', { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(50); // Limit number of topics shown
 
   if (error) {

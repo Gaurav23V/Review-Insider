@@ -2,12 +2,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import ReportDisplay from '@/components/ReportDisplay'; // Create this next
 
-type ReportData = {
-  id: string;
-  summary_text: string | null;
-  generated_at: string | null;
-};
-
 export default async function ReportsPage() {
   // Fetch the single most recent summary
   const { data: report, error } = await supabase
