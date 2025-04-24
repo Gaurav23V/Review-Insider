@@ -9,10 +9,13 @@ from chains.sentiment import analyze_sentiment
 from chains.classification import classify_review
 from chains.topic import extract_and_store_topics
 from chains.summary import generate_and_store_weekly_summary
+from flask_cors import CORS
 import logging # Add logging
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
+
+CORS(app) 
 
 @app.route("/webhook/reviews", methods=["POST"])
 def webhook_reviews():
@@ -101,6 +104,12 @@ def run_weekly_summary_task():
     except Exception as e:
         logging.error(f"Error during weekly summary task: {e}", exc_info=True)
         return jsonify({"status": "error", "message": "Weekly summary task failed."}), 500
+    
+@app.route("/")
+def health_check():
+    logging.info("Health check endpoint hit")
+    return jsonify({"status": "ok", "message": "Backend is running"}), 200
+
 
 
 if __name__ == "__main__":
