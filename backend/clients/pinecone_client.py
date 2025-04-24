@@ -1,9 +1,8 @@
-# backend/clients/pinecone_client.py
 import os
 from dotenv import load_dotenv
 from pinecone import Pinecone
 
-load_dotenv()  # loads .env or .env.local
+load_dotenv()  
 
 # 1) Instantiate the Pinecone client
 pc = Pinecone(

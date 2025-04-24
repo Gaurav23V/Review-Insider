@@ -1,8 +1,5 @@
-# backend/chains/embedding.py
-
 import os
 from google import genai
-# from google.genai import types # Keep commented unless needed for config
 from dotenv import load_dotenv
 from clients.pinecone_client import upsert_review_embedding
 from clients.supabase_client import supabase
@@ -30,10 +27,8 @@ def embed_and_store(review_id: str, text: str, metadata: dict):
         embed_resp = client.models.embed_content(
             model=EMBED_MODEL,
             contents=text,
-            # task_type='RETRIEVAL_DOCUMENT' # Often inferred, add if needed via config
         )
 
-        # --- CORRECTED RESPONSE HANDLING ---
         # Check if the response has the 'embeddings' list and it's not empty
         if not hasattr(embed_resp, 'embeddings') or not embed_resp.embeddings:
              logging.error(f"Embedding failed or unexpected response structure (no embeddings list) for review {review_id}. Response: {embed_resp}")
@@ -47,8 +42,7 @@ def embed_and_store(review_id: str, text: str, metadata: dict):
             logging.error(f"Embedding object missing 'values' list for review {review_id}. Embedding object: {embedding_object}")
             return
 
-        vector = embedding_object.values # Get the actual vector list
-        # --- END CORRECTION ---
+        vector = embedding_object.values 
 
         # Check dimension
         if len(vector) != EXPECTED_DIMENSION:

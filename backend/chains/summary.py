@@ -1,7 +1,4 @@
-# backend/chains/summary.py
-
 from datetime import datetime, timedelta
-# Remove unused LLMChain import if using newer Langchain syntax later
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from clients.supabase_client import supabase

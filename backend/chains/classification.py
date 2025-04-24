@@ -1,5 +1,3 @@
-# backend/chains/classification.py
-
 from clients.supabase_client import supabase
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain

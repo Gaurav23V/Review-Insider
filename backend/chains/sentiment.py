@@ -1,11 +1,9 @@
-# backend/chains/sentiment.py
-
 import json
 from clients.supabase_client import supabase
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from clients.gemini_llm import GeminiLLM
-import logging # Add logging
+import logging
 
 logging.basicConfig(level=logging.INFO)
 

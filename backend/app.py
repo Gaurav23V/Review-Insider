@@ -1,16 +1,13 @@
-# backend/app.py
-
 import os
 from flask import Flask, request, jsonify
 from clients.supabase_client import supabase
-# Remove unused import: from clients.pinecone_client import upsert_review_embedding
 from chains.embedding import embed_and_store
 from chains.sentiment import analyze_sentiment
 from chains.classification import classify_review
 from chains.topic import extract_and_store_topics
 from chains.summary import generate_and_store_weekly_summary
 from flask_cors import CORS
-import logging # Add logging
+import logging 
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +23,6 @@ def webhook_reviews():
             logging.error("Webhook received empty payload")
             return jsonify({"error": "Empty payload"}), 400
 
-        # Basic validation for required fields
         required_fields = ["id", "text", "review_date"]
         if not all(field in payload for field in required_fields):
              missing = [f for f in required_fields if f not in payload]
@@ -36,11 +32,10 @@ def webhook_reviews():
         review_id   = payload["id"]
         text        = payload["text"]
         review_date = payload["review_date"]
-        metadata    = payload.get("metadata", {}) # Safely get metadata
+        metadata    = payload.get("metadata", {}) 
 
         logging.info(f"Processing review ID: {review_id}")
 
-        # 1) Insert raw review into Supabase
         insert_response = supabase.table("reviews").insert({
             "id":          review_id,
             "text":        text,
@@ -48,18 +43,11 @@ def webhook_reviews():
             "metadata":    metadata
         }).execute()
 
-        # Optional: Check Supabase insert response
-        # if hasattr(insert_response, 'error') and insert_response.error:
-        #    logging.error(f"Supabase insert error for review {review_id}: {insert_response.error}")
-        #    return jsonify({"error": "Failed to store review"}), 500
-
         logging.info(f"Stored raw review {review_id} in Supabase.")
 
-        # 2) Fire off downstream chains (consider running these in background tasks later for performance)
-        # For now, run sequentially
         embed_and_store(review_id, text, metadata)
         analyze_sentiment(review_id, text)
-        classify_review(review_id, text, buckets="Service,Location,Product") # Pass buckets explicitly if needed
+        classify_review(review_id, text, buckets="Service,Location,Product") 
 
         logging.info(f"Finished processing chains for review {review_id}")
         return jsonify({"status": "ok"}), 200
@@ -76,8 +64,7 @@ def run_topic_extraction_task():
     """
     logging.info("Received request to run topic extraction.")
     try:
-        # You might want to add parameters here later (e.g., k, sample_size)
-        # passed via request body if needed.
+
         extract_and_store_topics()
         logging.info("Topic extraction task completed successfully.")
         return jsonify({"status": "ok", "message": "Topic extraction started."}), 200
@@ -92,7 +79,6 @@ def run_weekly_summary_task():
     """
     logging.info("Received request to run weekly summary.")
     try:
-        # Call the function that now also stores the summary
         summary_text = generate_and_store_weekly_summary()
 
         if summary_text:
@@ -113,6 +99,5 @@ def health_check():
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080)) # Use 8080 common for cloud run/app engine
-    # Set debug=False for production environments
+    port = int(os.getenv("PORT", 8080)) 
     app.run(host="0.0.0.0", port=port, debug=os.getenv("FLASK_DEBUG", "False") == "True")

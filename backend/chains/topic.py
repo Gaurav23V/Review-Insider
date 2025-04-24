@@ -1,5 +1,3 @@
-# backend/chains/topic.py
-
 import json
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -51,12 +49,10 @@ def extract_and_store_topics(k: int = 5, sample_size: int = 50):
         raw_output = chain.run(context=context, k=str(k)) # Get raw output first
         logging.info(f"Raw topic output from LLM: {raw_output}")
 
-        # --- ADD CLEANING STEP ---
-        # Remove potential markdown fences and surrounding whitespace
-        # Regex looks for optional ```json\n at start and \n``` at end
+
         cleaned_output = re.sub(r"^\s*```json\s*|\s*```\s*$", "", raw_output).strip()
         logging.info(f"Cleaned topic output for JSON parsing: {cleaned_output}")
-        # --- END CLEANING STEP ---
+
 
         # 3) Parse JSON
         try:
