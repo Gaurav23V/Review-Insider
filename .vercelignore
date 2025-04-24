@@ -1,0 +1,7 @@
+# .vercelignore
+**/__pycache__/
+**/*.pyc
+frontend/werkzeug/
+frontend/flask/
+backend/
+.venv/
