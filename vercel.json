@@ -1,24 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-      { 
-        "src": "frontend/package.json",
-        "use": "@vercel/next",
-        "config": {
-          "outputDirectory": ".next"  
-        }
-      },
-      { 
-        "src": "api/index.py",
-        "use": "@vercel/python",
-        "config": {
-          "includeFiles": ["backend/**", "requirements.txt"]
-        }
-      }
-    ],
-    "routes": [
-      { "src": "/api/(.*)", "dest": "/api/index.py" },
-      { "src": "/(.*)", "dest": "/frontend/$1", "continue": true }
-    ]
-  }
-  
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    }
+  ]
+}
